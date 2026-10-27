@@ -1,0 +1,13 @@
+from random import randint
+min_str = input("min: ")
+max_str = input("max: ")
+minimum = int(min_str)
+maximum = int(max_str)
+random1 = randint(minimum, maximum)
+random2 = randint(minimum, maximum)
+random3 = randint(minimum, maximum)
+random4 = randint(minimum, maximum)
+print(f"{random1} {random2} {random3} {random4}")
+
+print()
+input("press return to continue...")

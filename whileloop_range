@@ -1,0 +1,6 @@
+counter = 0
+output = ""
+while counter < 10:
+    output += ""
+    counter += 1
+print (output)
