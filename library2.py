@@ -1,4 +1,3 @@
-from struct import pack
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import json
@@ -10,6 +9,9 @@ BACKUP_FILE = "library_backup.txt"
 HISTORY_FILE = "library_history.txt"
 
 books = {}
+
+
+# LOAD AND SAVE RECORDS
 
 def load_books():
     global books
@@ -49,8 +51,10 @@ def load_books():
         books = {}
         messagebox.showwarning(
             "Loading Error",
-            f"The saved records could not be loaded.\n\n{error}")
-        
+            f"The saved records could not be loaded.\n\n{error}"
+        )
+
+
 def save_books():
     try:
         if os.path.exists(FILE_NAME):
@@ -71,9 +75,10 @@ def save_books():
     except (OSError, TypeError) as error:
         messagebox.showerror(
             "Save Error",
-            f"The records could not be saved.\n\n{error}")
-        
+            f"The records could not be saved.\n\n{error}"
+        )
         return False
+
 
 def record_history(action, isbn, title):
     date_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -82,16 +87,19 @@ def record_history(action, isbn, title):
         "date": date_time,
         "action": action,
         "isbn": isbn,
-        "title": title}
-    
+        "title": title
+    }
+
     try:
         with open(HISTORY_FILE, "a", encoding="utf-8") as file:
             file.write(json.dumps(entry) + "\n")
     except OSError:
         messagebox.showwarning(
             "History Error",
-            "The action was completed, but the history could not be saved.")
-        
+            "The action was completed, but the history could not be saved."
+        )
+
+
 def load_history():
     history = []
 
@@ -113,9 +121,13 @@ def load_history():
     except OSError:
         messagebox.showerror(
             "History Error",
-            "The borrowing history could not be opened.")
+            "The borrowing history could not be opened."
+        )
 
     return history
+
+
+# DISPLAY BOOKS
 
 def refresh_books():
     for item in book_table.get_children():
@@ -125,8 +137,8 @@ def refresh_books():
 
     for isbn, book in sorted(
         books.items(),
-        key=lambda item: item[1]["title"].lower()):
-    
+        key=lambda item: item[1]["title"].lower()
+    ):
         title = book["title"]
         author = book["author"]
 
@@ -134,8 +146,8 @@ def refresh_books():
             if (
                 search_text not in title.lower()
                 and search_text not in author.lower()
-                and search_text not in isbn.lower()):
-            
+                and search_text not in isbn.lower()
+            ):
                 continue
 
         book_table.insert(
@@ -147,15 +159,20 @@ def refresh_books():
                 author,
                 isbn,
                 book["quantity"],
-                book["borrowed"]))
-            
+                book["borrowed"]
+            )
+        )
+
     status_label.config(
         text=f"Total books: {len(books)} | "
-             f"Copies available: {sum(b['quantity'] for b in books.values())}")
-    
+             f"Copies available: {sum(b['quantity'] for b in books.values())}"
+    )
+
+
 def clear_search():
     search_entry.delete(0, tk.END)
     refresh_books()
+
 
 def get_selected_isbn():
     selected = book_table.selection()
@@ -163,25 +180,30 @@ def get_selected_isbn():
     if not selected:
         messagebox.showwarning(
             "Select a Book",
-            "Please select a book from the table first.")
-        
+            "Please select a book from the table first."
+        )
         return None
 
     return selected[0]
+
+
+# ADD A BOOK
 
 def add_book():
     title = simpledialog.askstring(
         "Add Book",
         "Enter the book title:",
-        parent=root)
-    
+        parent=root
+    )
+
     if title is None:
         return
 
     author = simpledialog.askstring(
         "Add Book",
         "Enter the author's name:",
-        parent=root)
+        parent=root
+    )
 
     if author is None:
         return
@@ -189,7 +211,8 @@ def add_book():
     isbn = simpledialog.askstring(
         "Add Book",
         "Enter the ISBN:",
-        parent=root)
+        parent=root
+    )
 
     if isbn is None:
         return
@@ -201,22 +224,22 @@ def add_book():
     if not title or not author or not isbn:
         messagebox.showerror(
             "Missing Information",
-            "Please complete all the fields.")
-        
+            "Please complete all the fields."
+        )
         return
 
     if any(char.isspace() for char in isbn):
         messagebox.showerror(
             "Invalid ISBN",
-            "The ISBN must not contain spaces.")
-        
+            "The ISBN must not contain spaces."
+        )
         return
 
     if isbn in books:
         messagebox.showerror(
             "Duplicate ISBN",
-            "A book with this ISBN already exists.")
-        
+            "A book with this ISBN already exists."
+        )
         return
 
     quantity = simpledialog.askinteger(
@@ -224,8 +247,9 @@ def add_book():
         "Enter the number of copies available:",
         parent=root,
         minvalue=0,
-        maxvalue=100000)
-    
+        maxvalue=100000
+    )
+
     if quantity is None:
         return
 
@@ -233,7 +257,8 @@ def add_book():
         "title": title,
         "author": author,
         "quantity": quantity,
-        "borrowed": 0}
+        "borrowed": 0
+    }
 
     if save_books():
         record_history("Book added", isbn, title)
@@ -241,10 +266,13 @@ def add_book():
 
         messagebox.showinfo(
             "Success",
-            f'"{title}" was added successfully.')
-        
+            f'"{title}" was added successfully.'
+        )
     else:
         del books[isbn]
+
+
+# EDIT A BOOK
 
 def edit_book():
     isbn = get_selected_isbn()
@@ -258,8 +286,9 @@ def edit_book():
         "Edit Book",
         "Enter the book title:",
         initialvalue=book["title"],
-        parent=root)
-    
+        parent=root
+    )
+
     if title is None:
         return
 
@@ -267,8 +296,9 @@ def edit_book():
         "Edit Book",
         "Enter the author's name:",
         initialvalue=book["author"],
-        parent=root)
-    
+        parent=root
+    )
+
     if author is None:
         return
 
@@ -278,8 +308,8 @@ def edit_book():
     if not title or not author:
         messagebox.showerror(
             "Invalid Information",
-            "Title and author cannot be empty.")
-        
+            "Title and author cannot be empty."
+        )
         return
 
     old_title = book["title"]
@@ -293,11 +323,14 @@ def edit_book():
         refresh_books()
         messagebox.showinfo(
             "Success",
-            "Book details updated successfully.")
-        
+            "Book details updated successfully."
+        )
     else:
         book["title"] = old_title
         book["author"] = old_author
+
+
+# DELETE A BOOK
 
 def delete_book():
     isbn = get_selected_isbn()
@@ -311,13 +344,14 @@ def delete_book():
         messagebox.showwarning(
             "Cannot Delete",
             "This book has borrowed copies recorded. "
-            "Return those copies before deleting the record.")
-        
+            "Return those copies before deleting the record."
+        )
         return
 
     answer = messagebox.askyesno(
         "Delete Book",
-        f'Are you sure you want to delete "{book["title"]}"?')
+        f'Are you sure you want to delete "{book["title"]}"?'
+    )
 
     if not answer:
         return
@@ -329,18 +363,22 @@ def delete_book():
         refresh_books()
         messagebox.showinfo(
             "Success",
-            "Book record deleted successfully.")
-        
+            "Book record deleted successfully."
+        )
     else:
         books[isbn] = removed_book
         refresh_books()
+
+
+# SEARCH FOR BOOKS
 
 def search_book():
     query = simpledialog.askstring(
         "Search Book",
         "Enter a title, author or ISBN:",
-        parent=root)
-    
+        parent=root
+    )
+
     if query is None:
         return
 
@@ -349,7 +387,8 @@ def search_book():
     if not query:
         messagebox.showwarning(
             "Search",
-            "Please enter something to search for.")
+            "Please enter something to search for."
+        )
         return
 
     search_entry.delete(0, tk.END)
@@ -359,7 +398,11 @@ def search_book():
     if not book_table.get_children():
         messagebox.showinfo(
             "Search Results",
-            "No matching books were found.")
+            "No matching books were found."
+        )
+
+
+# BORROW A BOOK
 
 def borrow_book():
     isbn = get_selected_isbn()
@@ -372,8 +415,8 @@ def borrow_book():
     if book["quantity"] <= 0:
         messagebox.showwarning(
             "Book Unavailable",
-            "There are no copies available to borrow.")
-        
+            "There are no copies available to borrow."
+        )
         return
 
     book["quantity"] -= 1
@@ -385,12 +428,15 @@ def borrow_book():
 
         messagebox.showinfo(
             "Success",
-            f'"{book["title"]}" has been borrowed.')
-        
+            f'"{book["title"]}" has been borrowed.'
+        )
     else:
         book["quantity"] += 1
         book["borrowed"] -= 1
         refresh_books()
+
+
+# RETURN A BOOK
 
 def return_book():
     isbn = get_selected_isbn()
@@ -403,8 +449,8 @@ def return_book():
     if book["borrowed"] <= 0:
         messagebox.showwarning(
             "Return Book",
-            "No borrowed copies are recorded for this book.")
-        
+            "No borrowed copies are recorded for this book."
+        )
         return
 
     book["quantity"] += 1
@@ -416,12 +462,15 @@ def return_book():
 
         messagebox.showinfo(
             "Success",
-            f'"{book["title"]}" has been returned.')
-        
+            f'"{book["title"]}" has been returned.'
+        )
     else:
         book["quantity"] -= 1
         book["borrowed"] += 1
         refresh_books()
+
+
+# LOW-STOCK REPORT
 
 def low_stock():
     results = []
@@ -431,17 +480,22 @@ def low_stock():
             results.append(
                 f'Title: {book["title"]}\n'
                 f'ISBN: {isbn}\n'
-                f'Available copies: {book["quantity"]}')
+                f'Available copies: {book["quantity"]}'
+            )
 
     if results:
         messagebox.showinfo(
             "Low-Stock Books",
-            "\n\n".join(results))
-        
+            "\n\n".join(results)
+        )
     else:
         messagebox.showinfo(
             "Low-Stock Books",
-            "There are no low-stock books.")
+            "There are no low-stock books."
+        )
+
+
+# BORROWING AND RETURNING HISTORY
 
 def show_history():
     history = load_history()
@@ -449,8 +503,8 @@ def show_history():
     if not history:
         messagebox.showinfo(
             "Library History",
-            "No library activity has been recorded yet.")
-        
+            "No library activity has been recorded yet."
+        )
         return
 
     history_window = tk.Toplevel(root)
@@ -461,8 +515,8 @@ def show_history():
     heading = ttk.Label(
         history_window,
         text="LIBRARY ACTIVITY HISTORY",
-        font=("Arial", 14, "bold"))
-    
+        font=("Arial", 14, "bold")
+    )
     heading.pack(pady=12)
 
     columns = ("date", "action", "title", "isbn")
@@ -470,8 +524,9 @@ def show_history():
     history_table = ttk.Treeview(
         history_window,
         columns=columns,
-        show="headings")
-    
+        show="headings"
+    )
+
     history_table.heading("date", text="Date and Time")
     history_table.heading("action", text="Action")
     history_table.heading("title", text="Book Title")
@@ -485,23 +540,27 @@ def show_history():
     scrollbar = ttk.Scrollbar(
         history_window,
         orient="vertical",
-        command=history_table.yview)
+        command=history_table.yview
+    )
 
     history_table.configure(
-        yscrollcommand=scrollbar.set)
+        yscrollcommand=scrollbar.set
+    )
 
     history_table.pack(
         side="left",
         fill="both",
         expand=True,
         padx=(10, 0),
-        pady=(0, 10))
+        pady=(0, 10)
+    )
 
     scrollbar.pack(
         side="right",
         fill="y",
         padx=(0, 10),
-        pady=(0, 10))
+        pady=(0, 10)
+    )
 
     for entry in reversed(history):
         history_table.insert(
@@ -511,7 +570,12 @@ def show_history():
                 entry.get("date", ""),
                 entry.get("action", ""),
                 entry.get("title", ""),
-                entry.get("isbn", "")))
+                entry.get("isbn", "")
+            )
+        )
+
+
+# ABOUT THE PROGRAM
 
 def show_about():
     messagebox.showinfo(
@@ -521,27 +585,141 @@ def show_about():
         "Features include adding, editing, deleting, searching, "
         "borrowing and returning books, checking low stock, "
         "and viewing activity history.\n\n"
-        "Book records are stored in a local file.")
+        "Book records are stored in a local file."
+    )
+
+
+# MAIN WINDOW
 
 root = tk.Tk()
 root.title("City Central Library - Book Management")
 root.geometry("1050x600")
 root.minsize(850, 500)
+root.configure(bg="#F8F3E9")
+# root.resizable(width=False, height=False)
+
+# Appearance settings: a polished, warm library theme.
+style = ttk.Style()
+style.theme_use("clam")
+
+BACKGROUND = "#F3F0E8"
+PANEL = "#FAF8F2"
+DARK_GREEN = "#294B3D"
+MID_GREEN = "#496B58"
+LIGHT_GREEN = "#E2EADF"
+GOLD = "#C69B55"
+TEXT = "#34443A"
+
+root.configure(bg=BACKGROUND)
+
+style.configure("TFrame", background=BACKGROUND)
+style.configure("TLabel", background=BACKGROUND, foreground=TEXT,
+                font=("Arial", 10))
+style.configure(
+    "TButton",
+    background=LIGHT_GREEN,
+    foreground=DARK_GREEN,
+    font=("Arial", 9, "bold"),
+    padding=(10, 8),
+    borderwidth=0
+)
+style.map(
+    "TButton",
+    background=[("active", "#D0DDCE"), ("pressed", "#BECFBC")],
+    foreground=[("active", DARK_GREEN)]
+)
+style.configure(
+    "TEntry",
+    fieldbackground=PANEL,
+    foreground=TEXT,
+    padding=7,
+    borderwidth=1,
+    relief="flat"
+)
+style.configure(
+    "Treeview",
+    background=PANEL,
+    fieldbackground=PANEL,
+    foreground=TEXT,
+    rowheight=31,
+    borderwidth=0,
+    font=("Arial", 10)
+)
+style.configure(
+    "Treeview.Heading",
+    background=DARK_GREEN,
+    foreground="#FFFFFF",
+    font=("Arial", 9, "bold"),
+    padding=(8, 10),
+    relief="flat"
+)
+style.map(
+    "Treeview",
+    background=[("selected", "#D9C79F")],
+    foreground=[("selected", DARK_GREEN)]
+)
+style.map(
+    "Treeview.Heading",
+    background=[("active", MID_GREEN)]
+)
 
 load_books()
 
-heading = ttk.Label(
+# Clean library banner with a small bookshelf illustration.
+header = tk.Canvas(
     root,
+    height=112,
+    bg=BACKGROUND,
+    highlightthickness=0
+)
+header.pack(fill="x")
+
+# Main banner
+header.create_rectangle(0, 0, 1080, 105, fill=DARK_GREEN, outline="")
+header.create_rectangle(0, 100, 1080, 105, fill=GOLD, outline="")
+
+header.create_text(
+    55, 35,
     text="CITY CENTRAL LIBRARY",
-    font=("Arial", 20, "bold"))
+    anchor="w",
+    fill="#FFFFFF",
+    font=("Arial", 21, "bold")
+)
+header.create_text(
+    57, 66,
+    text="BOOK INVENTORY  •  BORROWING  •  RETURNS",
+    anchor="w",
+    fill="#E5E9DF",
+    font=("Arial", 9, "bold")
+)
 
-heading.pack(pady=(15, 4))
+# Simple decorative bookshelf on the right, kept separate from the text.
+header.create_rectangle(790, 78, 1080, 85, fill="#C69B55", outline="")
+spine_colours = ["#D9A16F", "#9DB7A0", "#D8C28D", "#A9B8C9", "#C88F86", "#D6B27A"]
+book_x = 812
+for index, colour in enumerate(spine_colours):
+    book_height = [39, 47, 34, 43, 38, 46][index]
+    book_width = 23
+    header.create_rectangle(
+        book_x, 78 - book_height, book_x + book_width, 78,
+        fill=colour, outline="#F3EBDD", width=1
+    )
+    header.create_line(
+        book_x + 5, 78 - book_height + 7,
+        book_x + 5, 72,
+        fill="#F3EBDD", width=1
+    )
+    book_x += 27
 
-subtitle = ttk.Label(
-    root,
-    text="Book Inventory and Borrowing System")
+header.create_text(
+    1008, 52,
+    text="READ\nMORE",
+    fill="#E5D4B2",
+    font=("Arial", 8, "bold"),
+    justify="center"
+)
 
-subtitle.pack(pady=(0, 12))
+# SEARCH BAR
 
 search_frame = ttk.Frame(root, padding=(10, 5))
 search_frame.pack(fill="x")
@@ -555,13 +733,17 @@ search_entry = ttk.Entry(search_frame, width=35)
 search_entry.pack(side="left", padx=4)
 search_entry.bind(
     "<KeyRelease>",
-    lambda event: refresh_books())
+    lambda event: refresh_books()
+)
 
 ttk.Button(
     search_frame,
     text="Clear Search",
     command=clear_search
 ).pack(side="left", padx=5)
+
+
+# BUTTONS
 
 button_frame = ttk.Frame(root, padding=8)
 button_frame.pack(fill="x")
@@ -576,33 +758,64 @@ buttons = [
     ("Low Stock", low_stock),
     ("History", show_history),
     ("Refresh", refresh_books),
-    ("About", show_about)]
+    ("About", show_about)
+]
+
+button_colours = [
+    "#DCE7DA", "#DCE7DA", "#EAD9D1", "#DCE7DA", "#D7E3E0",
+    "#D7E3E0", "#E9E0C9", "#DCE7DA", "#DCE7DA", "#E9E0C9"
+]
 
 for number, (text, command) in enumerate(buttons):
+    button_style = f"Library{number}.TButton"
+    style.configure(
+        button_style,
+        background=button_colours[number],
+        foreground=DARK_GREEN,
+        font=("Arial", 9, "bold"),
+        padding=(8, 6),
+        borderwidth=0
+    )
+    style.map(
+        button_style,
+        background=[("active", "#C8D8C5"), ("pressed", "#B7CBB5")]
+    )
     ttk.Button(
         button_frame,
         text=text,
-        command=command
+        command=command,
+        style=button_style
     ).grid(
         row=number // 5,
         column=number % 5,
         padx=4,
         pady=4,
-        sticky="ew")
+        sticky="ew"
+    )
 
 for column in range(5):
     button_frame.columnconfigure(column, weight=1)
 
+
+# BOOK TABLE
+
 table_frame = ttk.Frame(root, padding=(10, 5, 10, 8))
 table_frame.pack(fill="both", expand=True)
 
-columns = ("title", "author", "isbn", "quantity", "borrowed")
+columns = (
+    "title",
+    "author",
+    "isbn",
+    "quantity",
+    "borrowed"
+)
 
 book_table = ttk.Treeview(
     table_frame,
     columns=columns,
     show="headings",
-    selectmode="browse")
+    selectmode="browse"
+)
 
 book_table.heading("title", text="Book Title")
 book_table.heading("author", text="Author")
@@ -619,33 +832,51 @@ book_table.column("borrowed", width=100, anchor="center")
 scrollbar = ttk.Scrollbar(
     table_frame,
     orient="vertical",
-    command=book_table.yview)
+    command=book_table.yview
+)
 
 book_table.configure(
-    yscrollcommand=scrollbar.set)
+    yscrollcommand=scrollbar.set
+)
 
 book_table.pack(
     side="left",
     fill="both",
-    expand=True)
+    expand=True
+)
 
-scrollbar.pack(side="right", fill="y")
+scrollbar.pack(
+    side="right",
+    fill="y"
+)
+
+
+# STATUS BAR
 
 status_label = ttk.Label(
     root,
     text="",
     anchor="w",
-    padding=(12, 8))
-
+    padding=(12, 10),
+    font=("Arial", 9, "bold"),
+    background="#E5E9DF",
+    foreground=DARK_GREEN
+)
 status_label.pack(fill="x")
+
+
+# CLOSE THE PROGRAM
 
 def close_program():
     if messagebox.askyesno(
         "Exit",
-        "Do you want to close the library system?"):
+        "Do you want to close the library system?"
+    ):
         root.destroy()
+
 
 root.protocol("WM_DELETE_WINDOW", close_program)
 
 refresh_books()
+
 root.mainloop()

@@ -1,0 +1,6 @@
+{"date": "28/10/2026 15:56:23", "action": "Book added", "isbn": "12345", "title": "Homecoming"}
+{"date": "28/10/2026 15:57:10", "action": "Book added", "isbn": "12344", "title": "Far from home"}
+{"date": "28/10/2026 16:11:46", "action": "Book added", "isbn": "23654", "title": "Ferdinand"}
+{"date": "28/10/2026 16:11:53", "action": "Book deleted", "isbn": "23654", "title": "Ferdinand"}
+{"date": "28/10/2026 16:43:16", "action": "Book added", "isbn": "12334", "title": "No way home"}
+{"date": "28/10/2026 16:44:14", "action": "Book added", "isbn": "23446", "title": "Tinkerbell"}
