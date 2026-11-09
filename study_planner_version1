@@ -1,0 +1,81 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+root = tk.Tk()
+root.title("Study Planner")
+root.geometry("600x400")
+
+title = tk.Label(root, text="My Study Planner",
+                 font=("Arial", 18, "bold"))
+title.pack(pady=15)
+
+# Task input
+input_frame = tk.Frame(root)
+input_frame.pack(pady=5)
+
+task_entry = tk.Entry(input_frame, width=35)
+task_entry.grid(row=0, column=0, padx=5)
+
+# Task table
+table = ttk.Treeview(
+    root, columns=("Task", "Status"),
+    show="headings", height=10
+)
+
+table.heading("Task", text="Task")
+table.heading("Status", text="Status")
+
+table.column("Task", width=350)
+table.column("Status", width=150)
+
+table.pack(padx=10, pady=15)
+
+
+def add_task():
+    task = task_entry.get().strip()
+
+    if task == "":
+        messagebox.showwarning("Warning", "Enter a task first.")
+        return
+
+    table.insert("", "end", values=(task, "Pending"))
+    task_entry.delete(0, tk.END)
+
+
+def complete_task():
+    selected = table.selection()
+
+    if not selected:
+        messagebox.showwarning("Warning", "Select a task first.")
+        return
+
+    for item in selected:
+        task = table.item(item, "values")
+        table.item(item, values=(task[0], "Completed"))
+
+
+def delete_task():
+    selected = table.selection()
+
+    if not selected:
+        messagebox.showwarning("Warning", "Select a task first.")
+        return
+
+    for item in selected:
+        table.delete(item)
+
+
+# Buttons
+button_frame = tk.Frame(root)
+button_frame.pack(pady=5)
+
+tk.Button(button_frame, text="Add Task",
+          command=add_task).grid(row=0, column=0, padx=5)
+
+tk.Button(button_frame, text="Complete Task",
+          command=complete_task).grid(row=0, column=1, padx=5)
+
+tk.Button(button_frame, text="Delete Task",
+          command=delete_task).grid(row=0, column=2, padx=5)
+
+root.mainloop()
