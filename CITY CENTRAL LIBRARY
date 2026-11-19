@@ -1,0 +1,64 @@
+import tkinter as tk
+from tkinter import ttk, messagebox, simpledialog
+import json
+import os
+
+# file names and colours
+
+FILE_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), "library.txt")
+BACKUP_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "library_backup.txt")
+
+BACKGROUND = "#EEF3EA"
+BANNER = "#A9C5A0"
+BUTTON = "#BBD3B3"
+BUTTON_ACTIVE = "#A5C19C"
+DARK_GREEN = "#2F4F3A"
+GOLD = "#C69B55"
+
+books = {}
+
+# validate copies field
+
+def validate_quantity(value):
+    return value == "" or value.isdigit()
+
+# sort books by title
+
+def get_title(item):
+    return item[1]["title"].lower()
+
+# load and save books
+
+def load_books():
+    global books
+
+    if os.path.exists(FILE_NAME):
+        try:
+            with open(FILE_NAME, "r", encoding="utf-8") as file:
+                books = json.load(file)
+
+            for book in books.values():
+                book.setdefault("borrowed", 0)
+
+        except (OSError, ValueError, TypeError):
+            books = {}
+            messagebox.showwarning("Error", "Could not load saved books.")
+
+def save_books():
+    try:
+        if os.path.exists(FILE_NAME):
+            with open(FILE_NAME, "r", encoding="utf-8") as file:
+                old_data = file.read()
+
+            with open(BACKUP_FILE, "w", encoding="utf-8") as file:
+                file.write(old_data)
+
+        with open(FILE_NAME + ".tmp", "w", encoding="utf-8") as file:
+            json.dump(books, file, indent=4)
+
+        os.replace(FILE_NAME + ".tmp", FILE_NAME)
+        return True
+
+    except (OSError, TypeError):
+        messagebox.showerror("Error", "Could not save the records.")
+        return False
