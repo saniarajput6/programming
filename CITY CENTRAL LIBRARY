@@ -291,3 +291,41 @@ def return_book():
         book["quantity"] -= copies
         book["borrowed"] += copies
         refresh_books()
+
+# low stock
+
+def low_stock():
+    low_books = []
+
+    for isbn, book in books.items():
+        if book["quantity"] < 3:
+            low_books.append((book["title"], isbn, book["quantity"]))
+
+    if not low_books:
+        messagebox.showinfo("Low Stock", "There are no low-stock books.")
+        return
+
+    low_window = tk.Toplevel(root)
+    low_window.title("Low-Stock Books")
+    low_window.geometry("560x320")
+    low_window.configure(bg=BACKGROUND)
+
+    ttk.Label(low_window, text="LOW-STOCK BOOKS",
+              font=("Arial", 14, "bold")).pack(pady=12)
+
+    low_table = ttk.Treeview(
+        low_window, columns=("title", "isbn", "quantity"), show="headings"
+    )
+
+    low_table.heading("title", text="Book Title")
+    low_table.heading("isbn", text="ISBN")
+    low_table.heading("quantity", text="Available")
+
+    low_table.column("title", width=250)
+    low_table.column("isbn", width=150)
+    low_table.column("quantity", width=80, anchor="center")
+
+    low_table.pack(fill="both", expand=True, padx=10, pady=10)
+
+    for book in low_books:
+        low_table.insert("", "end", values=book)
