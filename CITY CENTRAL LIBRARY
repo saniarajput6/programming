@@ -62,3 +62,123 @@ def save_books():
     except (OSError, TypeError):
         messagebox.showerror("Error", "Could not save the records.")
         return False
+
+# display books 
+
+def refresh_books():
+    for item in book_table.get_children():
+        book_table.delete(item)
+
+    search = search_entry.get().lower().strip()
+
+    for isbn, book in sorted(books.items(), key=get_title):
+
+        if (search in book["title"].lower()
+                or search in book["author"].lower()
+                or search in isbn.lower()):
+
+            book_table.insert("", "end", iid=isbn,
+                              values=(book["title"], book["author"],
+                                      isbn, book["quantity"], book["borrowed"]))
+
+    total = len(books)
+    available = sum(book["quantity"] for book in books.values())
+
+    status_label.config(
+        text=f"Total books: {total} | Copies available: {available}"
+    )
+
+# clear and select book
+
+def clear_boxes():
+    title_entry.delete(0, tk.END)
+    author_entry.delete(0, tk.END)
+    isbn_entry.delete(0, tk.END)
+    quantity_entry.delete(0, tk.END)
+
+def get_selected_isbn():
+    selected = book_table.selection()
+
+    if selected:
+        return selected[0]
+
+    messagebox.showwarning("Select a Book", "Please select a book first.")
+    return None
+
+def fill_boxes(event):
+    isbn = get_selected_isbn()
+
+    if isbn:
+        book = books[isbn]
+
+        clear_boxes()
+        title_entry.insert(0, book["title"])
+        author_entry.insert(0, book["author"])
+        isbn_entry.insert(0, isbn)
+        quantity_entry.insert(0, book["quantity"])
+
+# add book
+
+def add_book():
+    title = title_entry.get().strip()
+    author = author_entry.get().strip()
+    isbn = isbn_entry.get().strip()
+    quantity = quantity_entry.get().strip()
+
+    if not title or not author or not isbn or not quantity:
+        messagebox.showerror("Error", "Please complete all the fields.")
+        return
+
+    if not isbn.isdigit() or len(isbn) != 10:
+        messagebox.showerror("Error", "ISBN must contain exactly 10 digits.")
+        return
+
+    if isbn in books:
+        messagebox.showerror("Error", "This ISBN already exists.")
+        return
+
+    if not quantity.isdigit():
+        messagebox.showerror("Error", "Copies must be a whole number.")
+        return
+
+    books[isbn] = {
+        "title": title,
+        "author": author,
+        "quantity": int(quantity),
+        "borrowed": 0
+    }
+
+    if save_books():
+        clear_boxes()
+        refresh_books()
+        messagebox.showinfo("Success", "Book added successfully.")
+    else:
+        del books[isbn]
+
+# EDIT A BOOK
+
+def edit_book():
+    isbn = get_selected_isbn()
+
+    if isbn is None:
+        return
+
+    title = title_entry.get().strip()
+    author = author_entry.get().strip()
+
+    if not title or not author:
+        messagebox.showerror("Error", "Title and author cannot be empty.")
+        return
+
+    old_title = books[isbn]["title"]
+    old_author = books[isbn]["author"]
+
+    books[isbn]["title"] = title
+    books[isbn]["author"] = author
+
+    if save_books():
+        refresh_books()
+        messagebox.showinfo("Success", "Book updated successfully.")
+    else:
+        books[isbn]["title"] = old_title
+        books[isbn]["author"] = old_author
