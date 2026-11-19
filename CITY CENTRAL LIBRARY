@@ -182,3 +182,112 @@ def edit_book():
     else:
         books[isbn]["title"] = old_title
         books[isbn]["author"] = old_author
+
+# delete book
+
+def delete_book():
+    isbn = get_selected_isbn()
+
+    if isbn is None:
+        return
+
+    book = books[isbn]
+
+    if book["borrowed"] > 0:
+        messagebox.showwarning("Error", "Return borrowed copies before deleting.")
+        return
+
+    answer = messagebox.askyesno(
+        "Delete Book", f'Are you sure you want to delete "{book["title"]}"?'
+    )
+
+    if answer:
+        removed_book = books.pop(isbn)
+
+        if save_books():
+            clear_boxes()
+            refresh_books()
+            messagebox.showinfo("Success", "Book deleted successfully.")
+        else:
+            books[isbn] = removed_book
+            refresh_books()
+
+# borrow book
+
+def borrow_book():
+    isbn = get_selected_isbn()
+
+    if isbn is None:
+        return
+
+    book = books[isbn]
+
+    if book["quantity"] <= 0:
+        messagebox.showwarning("Unavailable", "No copies are available.")
+        return
+
+    copies = simpledialog.askinteger(
+        "Borrow Book", "How many copies do you want to borrow?", parent=root
+    )
+
+    if copies is None:
+        return
+
+    if copies <= 0:
+        messagebox.showerror("Error", "Enter at least 1 copy.")
+        return
+
+    if copies > book["quantity"]:
+        messagebox.showerror("Error", "Not enough copies available.")
+        return
+
+    book["quantity"] -= copies
+    book["borrowed"] += copies
+
+    if save_books():
+        refresh_books()
+        messagebox.showinfo("Success", "Book borrowed successfully.")
+    else:
+        book["quantity"] += copies
+        book["borrowed"] -= copies
+        refresh_books()
+
+# return book
+
+def return_book():
+    isbn = get_selected_isbn()
+
+    if isbn is None:
+        return
+
+    book = books[isbn]
+
+    if book["borrowed"] <= 0:
+        messagebox.showwarning("Return Book", "No borrowed copies recorded.")
+        return
+
+    copies = simpledialog.askinteger(
+        "Return Book", "How many copies do you want to return?", parent=root
+    )
+
+    if copies is None:
+        return
+
+    if copies <= 0:
+        messagebox.showerror("Error", "Enter at least 1 copy.")
+        return
+
+    if copies > book["borrowed"]:
+        messagebox.showerror("Error", "Too many copies entered.")
+        return
+
+    book["quantity"] += copies
+    book["borrowed"] -= copies
+
+    if save_books():
+        refresh_books()
+        messagebox.showinfo("Success", "Book returned successfully.")
+    else:
+        book["quantity"] -= copies
+        book["borrowed"] += copies
+        refresh_books()
