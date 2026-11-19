@@ -329,3 +329,44 @@ def low_stock():
 
     for book in low_books:
         low_table.insert("", "end", values=book)
+
+# display books
+
+def display_all_books():
+    if not books:
+        messagebox.showinfo("Books", "There are no books in the system.")
+        return
+
+    display_window = tk.Toplevel(root)
+    display_window.title("All Books")
+    display_window.geometry("850x400")
+    display_window.configure(bg=BACKGROUND)
+
+    ttk.Label(display_window, text="ALL BOOKS",
+              font=("Arial", 15, "bold")).pack(pady=12)
+
+    columns = ("title", "author", "isbn", "quantity", "borrowed")
+
+    display_table = ttk.Treeview(
+        display_window, columns=columns, show="headings"
+    )
+
+    display_table.heading("title", text="Book Title")
+    display_table.heading("author", text="Author")
+    display_table.heading("isbn", text="ISBN")
+    display_table.heading("quantity", text="Available")
+    display_table.heading("borrowed", text="Borrowed")
+
+    display_table.column("title", width=220)
+    display_table.column("author", width=180)
+    display_table.column("isbn", width=160)
+    display_table.column("quantity", width=100, anchor="center")
+    display_table.column("borrowed", width=100, anchor="center")
+
+    display_table.pack(fill="both", expand=True, padx=10, pady=10)
+
+    for isbn, book in sorted(books.items(), key=get_title):
+
+        display_table.insert("", "end",
+                             values=(book["title"], book["author"], isbn,
+                                     book["quantity"], book["borrowed"]))
