@@ -418,3 +418,26 @@ style.map("Treeview",
           foreground=[("selected", DARK_GREEN)])
 
 load_books()
+
+# banner
+
+def draw_banner(event):
+    banner.delete("all")
+
+    banner.create_rectangle(0, 0, event.width, 100,
+                            fill=BANNER, outline="")
+
+    banner.create_rectangle(0, 100, event.width, 105,
+                            fill=GOLD, outline="")
+
+    banner.create_text(event.width // 2, 35,
+                       text="CITY CENTRAL LIBRARY",
+                       fill=DARK_GREEN, font=("Arial", 21, "bold"))
+
+    banner.create_text(event.width // 2, 66,
+                       text="BOOK INVENTORY  •  BORROWING  •  RETURNS",
+                       fill=DARK_GREEN, font=("Arial", 9, "bold"))
+
+banner = tk.Canvas(root, height=105, bg=BACKGROUND, highlightthickness=0)
+banner.pack(fill="x")
+banner.bind("<Configure>", draw_banner)
