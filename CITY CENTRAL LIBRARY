@@ -389,3 +389,32 @@ root.geometry("1050x600")
 root.minsize(850, 500)
 root.configure(bg=BACKGROUND)
 
+# style 
+
+style = ttk.Style()
+style.theme_use("clam")
+
+style.configure("TFrame", background=BACKGROUND)
+style.configure("TLabel", background=BACKGROUND,
+                foreground=DARK_GREEN, font=("Arial", 10))
+
+style.configure("TButton", background=BUTTON,
+                foreground=DARK_GREEN, font=("Arial", 9, "bold"),
+                padding=(8, 7), borderwidth=0)
+
+style.map("TButton", background=[("active", BUTTON_ACTIVE)])
+
+style.configure("TEntry", fieldbackground="#FAFCF8",
+                foreground=DARK_GREEN, padding=7)
+
+style.configure("Treeview", rowheight=30, font=("Arial", 10))
+
+style.configure("Treeview.Heading", background=BANNER,
+                foreground=DARK_GREEN, font=("Arial", 9, "bold"),
+                padding=(8, 8))
+
+style.map("Treeview",
+          background=[("selected", "#D9E8D2")],
+          foreground=[("selected", DARK_GREEN)])
+
+load_books()
