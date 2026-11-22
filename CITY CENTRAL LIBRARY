@@ -446,3 +446,14 @@ banner.bind("<Configure>", draw_banner)
 
 def search_books(event):
     refresh_books()
+
+# search bar
+
+search_frame = ttk.Frame(root, padding=(10, 5))
+search_frame.pack()
+
+ttk.Label(search_frame, text="Search:").pack(side="left", padx=(0, 6))
+
+search_entry = ttk.Entry(search_frame, width=35)
+search_entry.pack(side="left", padx=4)
+search_entry.bind("<KeyRelease>", search_books)
