@@ -441,3 +441,8 @@ def draw_banner(event):
 banner = tk.Canvas(root, height=105, bg=BACKGROUND, highlightthickness=0)
 banner.pack(fill="x")
 banner.bind("<Configure>", draw_banner)
+
+# search function
+
+def search_books(event):
+    refresh_books()
