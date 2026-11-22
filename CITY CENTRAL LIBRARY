@@ -381,5 +381,11 @@ def close_program():
     if answer:
         root.destroy()
     
-    
+# main window
+
+root = tk.Tk()
+root.title("City Central Library - Book Management")
+root.geometry("1050x600")
+root.minsize(850, 500)
+root.configure(bg=BACKGROUND)
 
