@@ -1,3 +1,4 @@
+from logging import root
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import json
@@ -370,3 +371,15 @@ def display_all_books():
         display_table.insert("", "end",
                              values=(book["title"], book["author"], isbn,
                                      book["quantity"], book["borrowed"]))
+
+# exit program
+
+def close_program():
+    answer = messagebox.askyesno(
+        "Exit Program", "Are you sure you want to exit the program?")
+
+    if answer:
+        root.destroy()
+    
+    
+
