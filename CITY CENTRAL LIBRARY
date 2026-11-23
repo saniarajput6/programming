@@ -457,3 +457,22 @@ ttk.Label(search_frame, text="Search:").pack(side="left", padx=(0, 6))
 search_entry = ttk.Entry(search_frame, width=35)
 search_entry.pack(side="left", padx=4)
 search_entry.bind("<KeyRelease>", search_books)
+
+# typing boxes
+
+form_frame = ttk.Frame(root, padding=(10, 5))
+form_frame.pack()
+
+ttk.Label(form_frame, text="Title:").grid(row=0, column=0, padx=4, pady=3)
+title_entry = ttk.Entry(form_frame, width=36)
+title_entry.grid(row=0, column=1, padx=4, pady=3)
+
+ttk.Label(form_frame, text="Author:").grid(row=0, column=2, padx=4, pady=3)
+author_entry = ttk.Entry(form_frame, width=36)
+author_entry.grid(row=0, column=3, padx=4, pady=3)
+
+ttk.Label(form_frame, text="ISBN (10 digits):").grid(row=1, column=0, padx=4, pady=3)
+isbn_entry = ttk.Entry(form_frame, width=36)
+isbn_entry.grid(row=1, column=1, padx=4, pady=3)
+
+ttk.Label(form_frame, text="Copies:").grid(row=1, column=2, padx=4, pady=3)
