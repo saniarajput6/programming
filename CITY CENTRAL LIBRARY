@@ -513,3 +513,35 @@ status_label = ttk.Label(
     root, text="", anchor="w", padding=(12, 8), background="#DCE8D6")
 
 status_label.pack(side="bottom", fill="x")
+
+# book table
+
+table_frame = ttk.Frame(root, padding=(10, 5, 10, 8))
+table_frame.pack(fill="both", expand=True)
+
+columns = ("title", "author", "isbn", "quantity", "borrowed")
+
+book_table = ttk.Treeview(
+    table_frame, columns=columns, show="headings", selectmode="browse")
+
+book_table.heading("title", text="Book Title")
+book_table.heading("author", text="Author")
+book_table.heading("isbn", text="ISBN")
+book_table.heading("quantity", text="Available")
+book_table.heading("borrowed", text="Borrowed")
+
+book_table.column("title", width=260, minwidth=150)
+book_table.column("author", width=200, minwidth=120)
+book_table.column("isbn", width=180, minwidth=130)
+book_table.column("quantity", width=100, anchor="center")
+book_table.column("borrowed", width=100, anchor="center")
+
+book_table.bind("<<TreeviewSelect>>", fill_boxes)
+
+scrollbar = ttk.Scrollbar(
+    table_frame, orient="vertical", command=book_table.yview)
+
+book_table.configure(yscrollcommand=scrollbar.set)
+
+book_table.pack(side="left", fill="both", expand=True)
+scrollbar.pack(side="right", fill="y")
