@@ -545,3 +545,11 @@ book_table.configure(yscrollcommand=scrollbar.set)
 
 book_table.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
+
+# close the program
+
+root.protocol("WM_DELETE_WINDOW", close_program)
+
+refresh_books()
+
+root.mainloop()
