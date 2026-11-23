@@ -483,3 +483,26 @@ check_quantity = root.register(validate_quantity)
 
 quantity_entry = ttk.Entry(form_frame, width=36)
 quantity_entry.grid(row=1, column=3, padx=4, pady=3)
+
+# buttons
+
+button_frame = ttk.Frame(root, padding=8)
+button_frame.pack(fill="x")
+
+buttons = [
+    ("Add Book", add_book),
+    ("Edit Book", edit_book),
+    ("Delete Book", delete_book),
+    ("Borrow", borrow_book),
+    ("Return", return_book),
+    ("Low Stock", low_stock),
+    ("Display All Books", display_all_books),
+    ("Exit Program", close_program)]
+
+for number, (text, command) in enumerate(buttons):
+    ttk.Button(button_frame, text=text, command=command).grid(
+        row=number // 4, column=number % 4,
+        padx=8, pady=5, sticky="ew")
+
+for column in range(4):
+    button_frame.columnconfigure(column, weight=1)
