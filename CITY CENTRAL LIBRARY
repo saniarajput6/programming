@@ -476,3 +476,10 @@ isbn_entry = ttk.Entry(form_frame, width=36)
 isbn_entry.grid(row=1, column=1, padx=4, pady=3)
 
 ttk.Label(form_frame, text="Copies:").grid(row=1, column=2, padx=4, pady=3)
+
+# apply validation to copies field
+
+check_quantity = root.register(validate_quantity)
+
+quantity_entry = ttk.Entry(form_frame, width=36)
+quantity_entry.grid(row=1, column=3, padx=4, pady=3)
