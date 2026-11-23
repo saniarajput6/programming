@@ -506,3 +506,10 @@ for number, (text, command) in enumerate(buttons):
 
 for column in range(4):
     button_frame.columnconfigure(column, weight=1)
+
+# status bar
+
+status_label = ttk.Label(
+    root, text="", anchor="w", padding=(12, 8), background="#DCE8D6")
+
+status_label.pack(side="bottom", fill="x")
